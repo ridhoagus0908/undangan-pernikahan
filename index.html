@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Undangan Pernikahan</title>
+  
+  <!-- Font Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #7b5228;
+      --bg-color: #fdfaf6;
+      --card-bg: #ffffff;
+      --text-color: #4a4a4a;
+      --accent-color: #d4af37;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      text-align: center;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Cover / Overlay Pembuka */
+    #cover {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://picsum.photos/800/1200?romantic') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      z-index: 999;
+      transition: transform 0.8s ease-in-out;
+    }
+
+    #cover.open {
+      transform: translateY(-100%);
+    }
+
+    .mempelai-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .btn-open {
+      margin-top: 25px;
+      padding: 12px 28px;
+      background-color: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Container Utama */
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: var(--card-bg);
+      min-height: 100vh;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding: 20px 0;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .title-script {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.8rem;
+      color: var(--primary-color);
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+    }
+
+    /* Pasangan Mempelai */
+    .couple-box {
+      margin: 20px 0;
+    }
+
+    .couple-img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--accent-color);
+      margin-bottom: 10px;
+    }
+
+    /* Countdown Timer */
+    .timer-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .time-box {
+      background: var(--bg-color);
+      padding: 10px;
+      border-radius: 8px;
+      min-width: 65px;
+      border: 1px solid #eee;
+    }
+
+    .time-box span {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .time-box label {
+      font-size: 0.75rem;
+      color: #777;
+    }
+
+    /* Galeri */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    /* Tombol Umum */
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Music Control Button (Floating) */
+    .music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 45px;
+      height: 45px;
+      background-color: var(--accent-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 100;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Musik Latar Belakang -->
+  <!-- Ganti URL audio berikut dengan link file musik MP3 Anda sendiri -->
+  <audio id="bg-music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Tombol Musik Mengambang -->
+  <div class="music-btn" id="musicToggle" onclick="toggleMusic()">🎵</div>
+
+  <!-- Cover Layar Penuh -->
+  <div id="cover">
+    <p class="subtitle" style="color: #eee;">Undangan Pernikahan</p>
+    <h1 class="mempelai-title">Mempelai Pria & Mempelai Wanita</h1>
+    <p>Kepada Yth.<br><strong>Bapak/Ibu/Saudara/i</strong></p>
+    <button class="btn-open" onclick="bukaUndangan()">Buka Undangan</button>
+  </div>
+
+  <!-- Konten Utama Undangan -->
+  <div class="container">
+
+    <!-- Section Pembuka -->
+    <section>
+      <p class="subtitle">Mengarungi Bahtera Rumah Tangga</p>
+      <h2 class="title-script">Mempelai Pria & Mempelai Wanita</h2>
+      <p style="font-size: 0.85rem; margin-top: 15px; color: #666;">
+        "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya."
+      </p>
+    </section>
+
+    <!-- Section Mempelai -->
+    <section>
+      <h3 class="subtitle">Pasangan Mempelai</h3>
+      
+      <div class="couple-box">
+        <img src="https://picsum.photos/200/200?random=1" alt="Mempelai Pria" class="couple-img">
+        <h4>Nama Mempelai Pria</h4>
+        <p style="font-size: 0.8rem; color: #777;">Putra dari Bapak Nama Ayah & Ibu Nama Ibu</p>
+      </div>
+
+      <p class="title-script" style="font-size: 2rem;">&</p>
+
+      <div class="couple-box">
+        <img src="https://picsum.photos/200/200?random=2" alt="Mempelai Wanita" class="couple-img">
+        <h4>Nama Mempelai Wanita</h4>
+        <p style="font-size: 0.8rem; color: #777;">Putri dari Bapak Nama Ayah & Ibu Nama Ibu</p>
+      </div>
+    </section>
+
+    <!-- Section Waktu & Acara -->
+    <section>
+      <h3 class="subtitle">Rangkaian Acara</h3>
+      
+      <div style="margin-bottom: 25px;">
+        <h4 style="color: var(--primary-color);">Akad Nikah</h4>
+        <p style="font-size: 0.85rem;">Sabtu, 12 Desember 2026</p>
+        <p style="font-size: 0.85rem;">Pukul: 08.00 WIB - Selesai</p>
+      </div>
+
+      <div style="margin-bottom: 25px;">
+        <h4 style="color: var(--primary-color);">Resepsi</h4>
+        <p style="font-size: 0.85rem;">Sabtu, 12 Desember 2026</p>
+        <p style="font-size: 0.85rem;">Pukul: 11.00 WIB - Selesai</p>
+        <p style="font-size: 0.85rem; margin-top: 5px;"><strong>Lokasi:</strong> Gedung / Alamat Tempat Acara</p>
+      </div>
+
+      <a href="https://maps.google.com" target="_blank" class="btn">Petunjuk Lokasi (Google Maps)</a>
+
+      <!-- Hitung Mundur -->
+      <div style="margin-top: 30px;">
+        <p class="subtitle">Hitung Mundur Acara</p>
+        <div class="timer-container">
+          <div class="time-box"><span id="days">0</span><label>Hari</label></div>
+          <div class="time-box"><span id="hours">0</span><label>Jam</label></div>
+          <div class="time-box"><span id="minutes">0</span><label>Menit</label></div>
+          <div class="time-box"><span id="seconds">0</span><label>Detik</label></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Galeri Foto -->
+    <section>
+      <h3 class="subtitle">Galeri Momen</h3>
+      <div class="gallery-grid">
+        <img src="https://picsum.photos/300/300?random=3" alt="Momen 1">
+        <img src="https://picsum.photos/300/300?random=4" alt="Momen 2">
+        <img src="https://picsum.photos/300/300?random=5" alt="Momen 3">
+        <img src="https://picsum.photos/300/300?random=6" alt="Momen 4">
+      </div>
+    </section>
+
+    <!-- Section Hadiah Digital -->
+    <section>
+      <h3 class="subtitle">Amplop Digital</h3>
+      <p style="font-size: 0.85rem; margin-bottom: 15px;">Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika ingin memberi hadiah, Anda dapat menyalurkannya melalui:</p>
+
+      <div style="background: var(--bg-color); padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+        <p><strong>Bank BCA / Mandiri</strong></p>
+        <p id="norek" style="font-weight: bold; margin: 5px 0;">1234567890</p>
+        <p style="font-size: 0.8rem;">a.n. Nama Pemilik Rekening</p>
+        <button class="btn" style="padding: 5px 12px; font-size: 0.75rem;" onclick="salinNorek()">Salin Nomor Rekening</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="padding: 20px 0; font-size: 0.8rem; color: #999;">
+      <p>Terima kasih atas doa & restunya.</p>
+      <p style="margin-top: 5px;">Kami yang berbahagia,</p>
+      <p style="font-weight: bold; color: var(--primary-color);">Keluarga Besar Kedua Mempelai</p>
+    </footer>
+
+  </div>
+
+  <!-- JavaScript Logika -->
+  <script>
+    const music = document.getElementById('bg-music');
+    let isPlaying = false;
+
+    // Fungsi Buka Undangan & Autoplay Musik
+    function bukaUndangan() {
+      document.getElementById('cover').classList.add('open');
+      playMusic();
+    }
+
+    // Toggle Musik
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        document.getElementById('musicToggle').innerText = '🔇';
+      } else {
+        music.play();
+        document.getElementById('musicToggle').innerText = '🎵';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    function playMusic() {
+      music.play().then(() => {
+        isPlaying = true;
+        document.getElementById('musicToggle').innerText = '🎵';
+      }).catch(err => {
+        console.log("Autoplay dicegah oleh browser:", err);
+      });
+    }
+
+    // Hitung Mundur (Countdown)
+    // Silakan sesuaikan tanggal pernikahan di bawah ini (Tahun, Bulan-1, Tanggal)
+    const targetDate = new Date("2026-12-12T08:00:00").getTime();
+
+    const countdown = setInterval(function() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").innerText = days > 0 ? days : 0;
+      document.getElementById("hours").innerText = hours > 0 ? hours : 0;
+      document.getElementById("minutes").innerText = minutes > 0 ? minutes : 0;
+      document.getElementById("seconds").innerText = seconds > 0 ? seconds : 0;
+
+      if (distance < 0) {
+        clearInterval(countdown);
+      }
+    }, 1000);
+
+    // Salin Rekening
+    function salinNorek() {
+      const norek = document.getElementById("norek").innerText;
+      navigator.clipboard.writeText(norek);
+      alert("Nomor rekening berhasil disalin!");
+    }
+  </script>
+</body>
+</html>
